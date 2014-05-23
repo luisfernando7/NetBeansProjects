@@ -26,7 +26,7 @@ public class ConnectionFactory {
             try {
                 System.out.println("Test");
                 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
-                String connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=DBPetSoft;"
+                String connectionURL = "jdbc:sqlserver://localhost:1433;databaseName=Teste;"
                         + "user=sa;password=P@55W0RD;MultipleActiveResultSets=true;";
                 connection = DriverManager.getConnection(connectionURL);
                 System.out.println("Conexão efetuada com sucesso");

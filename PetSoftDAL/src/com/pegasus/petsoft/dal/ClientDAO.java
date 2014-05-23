@@ -102,14 +102,34 @@ public class ClientDAO implements IRepository<Client> {
 
     }
 
-    @Override
+    @Override //ver com Luís
     public boolean update(Client t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Connection connection = ConnectionFactory.GetConnect();
+            PreparedStatement st = connection.prepareStatement("UPDATE [Client] SET [name] = ?, [borndate] = ?, [address_id] = ?,"
+                    + " [phone] = ?, [celphone] = ? WEHRE [id] = " + t.getId());
+            st.setString(1, t.getName());
+            st.setString(2, String.format("%s-%s-%s", t.getBornDate().getInstance().YEAR, t.getBornDate().getInstance().MONTH, t.getBornDate().getInstance().DAY_OF_MONTH));
+            st.setInt(3, t.getAddress().getId());
+            st.setInt(4, t.getPhone());
+            st.setInt(5, t.getCelphone());
+            return st.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
-    @Override
+    @Override //ver com Luís
     public boolean delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Connection connection = ConnectionFactory.GetConnect();
+            PreparedStatement st = connection.prepareStatement("DELETE FROM [Client] WHERE [id] = " + id);
+            return st.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
     private GregorianCalendar parseGregorianCalendar(String d) {

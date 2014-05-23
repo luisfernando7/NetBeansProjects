@@ -7,6 +7,7 @@
 package com.pegasus.petsoft.dal;
 import com.pegasus.petsoft.model.*;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,14 +20,43 @@ import java.util.logging.Logger;
  */
 public class AddressDAO implements IRepository<Address>{
 
-    @Override
+    @Override //ver com Luis
     public boolean insert(Address t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Connection connection = ConnectionFactory.GetConnect();
+            PreparedStatement st = connection.prepareStatement("INSERT INTO [Address] ([street], [neighborhood], [city], [cep], [complement], [uf]) VALUES (?,?,?,?,?,?)");
+            st.setString(1, t.getStreet());
+            st.setString(2, t.getneighborhood());
+            st.setString(3, t.getCity());
+            st.setInt(4, t.getCep());
+            //ver enum
+            return st.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
-    @Override
+    @Override //ver com Luis
     public Address retrieve(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Connection connection = ConnectionFactory.GetConnect();
+            Statement st = connection.createStatement();
+            ResultSet result = st.executeQuery("SELECT [street], [neighborhood], [city], [cep], [complement], [uf] FROM [Address] WHERE [id] = " + id);
+            Address a = new Address();
+            while (result.next()) {                
+                a.setStreet(result.getString("street"));
+                a.setneighborhood(result.getString("neighborhood"));
+                a.setCity(result.getString("city"));
+                a.setCep(result.getInt("cep"));
+                a.setComplement(result.getString("complement"));
+                //ver enum
+            }
+            return a;
+        } catch (SQLException ex) {
+            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     @Override
@@ -54,14 +84,34 @@ public class AddressDAO implements IRepository<Address>{
         
     }
 
-    @Override
+    @Override //ver com Luis
     public boolean update(Address t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Connection connection = ConnectionFactory.GetConnect();
+            PreparedStatement st = connection.prepareStatement("UPDATE [Address] SET [street] = ?, [neighborhood] = ?, [city] = ?, [cep] = ?, [complement] = ?, [uf] = ? WHERE [id] = " + t.getId());
+            st.setString(1, t.getStreet());
+            st.setString(2, t.getneighborhood());
+            st.setString(3, t.getCity());
+            st.setInt(4, t.getCep());
+            st.setString(5, t.getComplement());
+            //ver enum
+            return st.execute();                    
+        } catch (SQLException ex) {
+            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
-    @Override
+    @Override //ver com Luis
     public boolean delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Connection connection = ConnectionFactory.GetConnect();
+            PreparedStatement st = connection.prepareStatement("DELETE FROM [Address] WHERE [id] = " + id);
+            return st.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
     
 }
