@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @param <T> seu tipo de objeto
  */
 public interface IRepository<T> {
-    boolean insert(T t);
+    int insert(T t);
     T retrieve(int id);
     ArrayList<T> retrieveAll();
     boolean update(T t);

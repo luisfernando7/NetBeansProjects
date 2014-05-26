@@ -56,7 +56,7 @@ public class PetsDAO implements IRepository<Pets> {
     }
 
     @Override //ver com Luis
-    public boolean insert(Pets t) {
+    public int insert(Pets t) {
         try {
             Connection connection = ConnectionFactory.GetConnect();
             PreparedStatement st = connection.prepareStatement("INSERT INTO [Pet] ([name], [breed], [bornDate], [Client_id]) VALUES (?,?,?)");
@@ -64,10 +64,10 @@ public class PetsDAO implements IRepository<Pets> {
             st.setString(2, t.getBreed());
             st.setString(3, String.format("%s-%s-%s", t.getBornDate().getInstance().YEAR, t.getBornDate().getInstance().MONTH, t.getBornDate().getInstance().DAY_OF_MONTH));
             st.setInt(4, t.getOwner().getId());
-            return st.execute();
+            return st.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(PetsDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            return -1;
         }
     }
 

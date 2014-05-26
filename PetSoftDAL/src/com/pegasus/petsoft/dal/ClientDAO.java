@@ -31,20 +31,22 @@ public class ClientDAO implements IRepository<Client> {
     }
 
     @Override
-    public boolean insert(Client t) {
+    public int insert(Client t) {
         try {
             Connection connection = ConnectionFactory.GetConnect();
             PreparedStatement st = connection.prepareStatement("INSERT INTO [Client]([name],[bornDate],[address_id],[phone],[celphone]) VALUES (?,?,?,?,?)");
             st.setString(1, t.getName());
             st.setString(2, String.format("%s-%s-%s", t.getBornDate().getInstance().YEAR, t.getBornDate().getInstance().MONTH, t.getBornDate().getInstance().DAY_OF_MONTH));
-            st.setInt(3, t.getAddress().getId());
+            int id_endereco = addressDAO.insert(t.getAddress());
+            st.setInt(3, id_endereco);//E se o obj ainda não estiver no bd?
+            
             st.setInt(4, t.getPhone());
             st.setInt(5, t.getCelphone());
-            return st.execute();
+            return st.executeUpdate();
 
         } catch (SQLException ex) {
             Logger.getLogger(ClientDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            return -1;
         }
     }
 

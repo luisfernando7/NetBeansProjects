@@ -5,15 +5,17 @@
  */
 package com.pegasus.petsoft.client;
 
+import com.pegasus.petsoft.dal.*;
+import com.pegasus.petsoft.model.Address;
+import com.pegasus.petsoft.model.Client;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import com.pegasus.petsoft.dal.*;
-import com.pegasus.petsoft.model.Address;
-import com.pegasus.petsoft.model.Client;
-import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -339,8 +341,19 @@ public class MainJFrame extends javax.swing.JFrame {
     //</editor-fold>
     private void loadClientsInGrid() {
         
-        for (Client c : clientDAO.retrieveAll()) {
-            
+        ArrayList<String> columns = new ArrayList<String>();
+        ArrayList<String[]> values = new ArrayList<String[]>();
+
+        columns.add("col1");
+        columns.add("col2");
+        columns.add("col3");
+
+        for (int i = 0; i < 100; i++) {
+            values.add(new String[] {"val"+i+" col1","val"+i+" col2","val"+i+" col3"});
         }
+        
+        TableModel tableModel = new DefaultTableModel(values.toArray(new Object[][] {}), columns.toArray());
+        jTable1.setModel(tableModel);
+        
     }
 }

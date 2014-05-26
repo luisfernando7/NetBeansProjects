@@ -16,6 +16,7 @@ public class Address {
     private String neighborhood;
     private String city;
     private int cep;
+    private int number;
     private String complement;
 
     private enum uf {
@@ -24,6 +25,14 @@ public class Address {
         PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO;
     }
 
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+    
     public int getId() {
         return id;
     }
