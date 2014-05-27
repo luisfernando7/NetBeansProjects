@@ -138,6 +138,11 @@ public class MainJFrame extends javax.swing.JFrame {
         jTabbedPane1.addTab("Clientes", jPanel1);
 
         jButton5.setText("Adicionar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Excluir");
 
@@ -278,6 +283,12 @@ public class MainJFrame extends javax.swing.JFrame {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         loadClientsInGrid();
     }//GEN-LAST:event_formWindowOpened
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        JFrameAddPet addPet = new JFrameAddPet();
+        addPet.setLocationRelativeTo(this);
+        addPet.setVisible(true);
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments

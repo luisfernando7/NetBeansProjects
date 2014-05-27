@@ -6,6 +6,7 @@
 
 package com.pegasus.petsoft.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
