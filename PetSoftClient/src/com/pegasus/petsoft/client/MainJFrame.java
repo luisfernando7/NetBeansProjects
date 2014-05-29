@@ -8,6 +8,7 @@ package com.pegasus.petsoft.client;
 import com.pegasus.petsoft.dal.*;
 import com.pegasus.petsoft.model.Address;
 import com.pegasus.petsoft.model.Client;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +27,8 @@ public class MainJFrame extends javax.swing.JFrame {
     /**
      * Creates new form MainJFrame
      */
-   private ClientDAO clientDAO;
+    private ClientDAO clientDAO;
+
     public MainJFrame() {
         clientDAO = new ClientDAO();
         initComponents();
@@ -350,21 +352,24 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JTable jTable3;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
+
     private void loadClientsInGrid() {
-        
-        ArrayList<String> columns = new ArrayList<String>();
-        ArrayList<String[]> values = new ArrayList<String[]>();
 
-        columns.add("col1");
-        columns.add("col2");
-        columns.add("col3");
+        ArrayList<Client> clients = clientDAO.retrieveAll();
+        ArrayList<String> columns = new ArrayList<>();
+        ArrayList<String[]> values = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        columns.add("Nome");
+        columns.add("Data de Nascimento");
+        columns.add("Telefone");
+        columns.add("Celular");
 
-        for (int i = 0; i < 100; i++) {
-            values.add(new String[] {"val"+i+" col1","val"+i+" col2","val"+i+" col3"});
-        }
-        
-        TableModel tableModel = new DefaultTableModel(values.toArray(new Object[][] {}), columns.toArray());
+        clients.stream().forEach((c) -> {
+            values.add(new String[]{c.getName(), format.format(c.getBornDate().getTime()), String.valueOf(c.getPhone()), String.valueOf(c.getCelphone())});
+        });
+
+        TableModel tableModel = new DefaultTableModel(values.toArray(new Object[][]{}), columns.toArray());
         jTable1.setModel(tableModel);
-        
+
     }
 }

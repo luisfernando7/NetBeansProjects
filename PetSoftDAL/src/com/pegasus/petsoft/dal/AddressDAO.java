@@ -3,56 +3,67 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.pegasus.petsoft.dal;
+
 import com.pegasus.petsoft.model.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 /**
  *
  * @author luis.moraes
  */
-public class AddressDAO implements IRepository<Address>{
+public class AddressDAO implements IRepository<Address> {
 
-    @Override //ver com Luis
+    @Override
     public int insert(Address t) {
         try {
             Connection connection = ConnectionFactory.GetConnect();
-            PreparedStatement st = connection.prepareStatement("INSERT INTO [Address] ([street], [neighborhood], [city], [cep], [complement], [uf], [number]) VALUES (?,?,?,?,?,?,?) @@IDENTITY");
+            ResultSet generatedKeys;
+            PreparedStatement st = connection.prepareStatement("INSERT INTO [Address] ([street], [neighborhood], [city], [cep], [complement], [uf], [number]) VALUES (?,?,?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
             st.setString(1, t.getStreet());
             st.setString(2, t.getneighborhood());
             st.setString(3, t.getCity());
             st.setInt(4, t.getCep());
             st.setInt(5, t.getNumber());
-            //ver enum
-            return st.executeUpdate();
+            st.setString(6, t.getUf().toString());
+            st.setInt(7, t.getNumber());
+            st.executeUpdate();
+            generatedKeys = st.getGeneratedKeys();
+            int id = -1;
+            if (generatedKeys.next()) {
+                id = generatedKeys.getInt(1);
+            }
+            return id;
         } catch (SQLException ex) {
             Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
     }
 
-    @Override //ver com Luis
+    @Override
     public Address retrieve(int id) {
         try {
             Connection connection = ConnectionFactory.GetConnect();
             Statement st = connection.createStatement();
             ResultSet result = st.executeQuery("SELECT [street], [neighborhood], [city], [cep], [complement], [uf], [number] FROM [Address] WHERE [id] = " + id);
             Address a = new Address();
-            while (result.next()) {                
+            while (result.next()) {
                 a.setStreet(result.getString("street"));
                 a.setneighborhood(result.getString("neighborhood"));
                 a.setCity(result.getString("city"));
                 a.setCep(result.getInt("cep"));
                 a.setComplement(result.getString("complement"));
                 a.setNumber(result.getInt("number"));
-                //ver enum
+                a.setUf(UF.valueOf(result.getString("uf").toUpperCase()));
+                a.setNumber(result.getInt("number"));
             }
             return a;
         } catch (SQLException ex) {
@@ -64,11 +75,10 @@ public class AddressDAO implements IRepository<Address>{
     @Override
     public ArrayList<Address> retrieveAll() {
         try {
-            //TODO: Implementar o restante.
-            Connection connectionLocal = ConnectionFactory.GetConnect(); 
+            Connection connectionLocal = ConnectionFactory.GetConnect();
             Statement localStatement = connectionLocal.createStatement();
             ArrayList<Address> addressList = new ArrayList<Address>();
-            ResultSet result = localStatement.executeQuery("SELECT [id],[cep],[city],[neighborhood],[street], [UF], [number] FROM [Address]");
+            ResultSet result = localStatement.executeQuery("SELECT [id],[cep],[city],[neighborhood],[street], [uf], [number] FROM [Address]");
             while (result.next()) {
                 Address a = new Address();
                 a.setId(result.getInt("id"));
@@ -76,18 +86,18 @@ public class AddressDAO implements IRepository<Address>{
                 a.setCity(result.getString("city"));
                 a.setneighborhood(result.getString("neighborhood"));
                 a.setStreet(result.getString("street"));
+                a.setUf(UF.valueOf(result.getString("uf").toUpperCase()));
                 a.setNumber(result.getInt("number"));
-                //falta uf
                 addressList.add(a);
             }
             return addressList;
         } catch (SQLException ex) {
             Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, ex);
             return null;
-        }        
+        }
     }
 
-    @Override //ver com Luis
+    @Override
     public boolean update(Address t) {
         try {
             Connection connection = ConnectionFactory.GetConnect();
@@ -97,16 +107,16 @@ public class AddressDAO implements IRepository<Address>{
             st.setString(3, t.getCity());
             st.setInt(4, t.getCep());
             st.setString(5, t.getComplement());
-            st.setInt(6, t.getNumber());
-            //ver enum
-            return st.execute();                    
+            st.setString(6, t.getUf().toString());
+            st.setInt(7, t.getNumber());
+            return st.execute();
         } catch (SQLException ex) {
             Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
 
-    @Override //ver com Luis
+    @Override
     public boolean delete(int id) {
         try {
             Connection connection = ConnectionFactory.GetConnect();
@@ -117,5 +127,5 @@ public class AddressDAO implements IRepository<Address>{
             return false;
         }
     }
-    
+
 }

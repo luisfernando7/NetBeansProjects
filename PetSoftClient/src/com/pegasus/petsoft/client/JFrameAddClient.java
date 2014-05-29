@@ -8,6 +8,7 @@ package com.pegasus.petsoft.client;
 import com.pegasus.petsoft.dal.ClientDAO;
 import com.pegasus.petsoft.model.Address;
 import com.pegasus.petsoft.model.Client;
+import com.pegasus.petsoft.model.UF;
 import java.awt.Dimension;
 import java.text.DateFormat;
 import java.text.FieldPosition;
@@ -21,8 +22,8 @@ import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -35,10 +36,10 @@ public class JFrameAddClient extends javax.swing.JFrame {
      */
     public JFrameAddClient() {
         initComponents();
-        this.setTitle("Adição de Clientes");   
+        this.setTitle("Adição de Clientes");
         jPanel2.setBorder(BorderFactory.createTitledBorder("Informações Pessoais"));
         jPanelAddress.setBorder(BorderFactory.createTitledBorder("Endereço"));
-        
+        loadUFs();
     }
 
     /**
@@ -76,7 +77,7 @@ public class JFrameAddClient extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         txtClientComplement = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        cmbUF = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -162,7 +163,7 @@ public class JFrameAddClient extends javax.swing.JFrame {
 
         jLabel12.setText("UF:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbUF.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout jPanelAddressLayout = new javax.swing.GroupLayout(jPanelAddress);
         jPanelAddress.setLayout(jPanelAddressLayout);
@@ -196,7 +197,7 @@ public class JFrameAddClient extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanelAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtClientCEP, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(cmbUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanelAddressLayout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(36, 36, 36)
@@ -212,7 +213,6 @@ public class JFrameAddClient extends javax.swing.JFrame {
                     .addComponent(txtClientStreet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(txtClientNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel6)
@@ -227,7 +227,7 @@ public class JFrameAddClient extends javax.swing.JFrame {
                     .addComponent(jLabel8)
                     .addComponent(txtClientCity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelAddressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -288,28 +288,30 @@ public class JFrameAddClient extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Client client = new Client();
-        client.setName(txtClientName.getText());
-        client.setPhone(Integer.parseInt(txtClientPhone.getText()));
-        client.setCelphone(Integer.parseInt(txtClientCelphone.getText()));
-        DateFormat df = new SimpleDateFormat();
-        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
-        try {
-            date.setTime(df.parse(txtClientBornDate.getText()));
-        } catch (ParseException ex) {
-            Logger.getLogger(JFrameAddClient.class.getName()).log(Level.SEVERE, null, ex);
+        String msg = validateFields();
+        if (msg.equals("")) {
+
+            Client client = new Client();
+            client.setName(txtClientName.getText());
+            client.setPhone(Integer.parseInt(txtClientPhone.getText()));
+            client.setCelphone(Integer.parseInt(txtClientCelphone.getText()));
+            DateFormat df = new SimpleDateFormat();
+            GregorianCalendar date = parseGregorianCalendar(txtClientBornDate.getText(), "/");
+            client.setBornDate(date);
+            Address a = new Address();
+            a.setStreet(txtClientStreet.getText());
+            a.setneighborhood(txtClientNeiborhood.getText());
+            a.setCity(txtClientCity.getText());
+            a.setCep(Integer.parseInt(txtClientCEP.getText()));
+            a.setComplement(txtClientComplement.getText());
+            a.setNumber(Integer.parseInt(txtClientNumber.getText()));
+            a.setUf(UF.values()[cmbUF.getSelectedIndex()]);
+            client.setAddress(a);
+            ClientDAO cliente = new ClientDAO();
+            cliente.insert(client);
+        } else {
+            JOptionPane.showMessageDialog(this, msg);
         }
-        client.setBornDate(date);
-        Address a = new Address();
-        a.setStreet(txtClientStreet.getText());
-        a.setneighborhood(txtClientNeiborhood.getText());
-        a.setCity(txtClientCity.getText());
-        a.setCep(Integer.parseInt(txtClientCEP.getText()));
-        a.setComplement(txtClientComplement.getText());
-        a.setNumber(Integer.parseInt(txtClientNumber.getText()));
-        client.setAddress(a);
-        ClientDAO cliente = new ClientDAO();
-        cliente.insert(client);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -348,11 +350,14 @@ public class JFrameAddClient extends javax.swing.JFrame {
         });
     }
 
+    private void loadUFs() {
+        cmbUF.setModel(new DefaultComboBoxModel<>(UF.values()));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox cmbUF;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
@@ -378,4 +383,21 @@ public class JFrameAddClient extends javax.swing.JFrame {
     private javax.swing.JTextField txtClientPhone;
     private javax.swing.JTextField txtClientStreet;
     // End of variables declaration//GEN-END:variables
+
+    private String validateFields() {
+        if (txtClientName.getText().isEmpty()) {
+            return "Por favor, preencha o campo Nome";
+        }
+        return "";
+    }
+
+    private GregorianCalendar parseGregorianCalendar(String source, String delimiter) {
+        String[] date = source.split(delimiter);
+        int day = Integer.parseInt(date[0]);
+        int month = Integer.parseInt(date[1]);
+        int year = Integer.parseInt(date[2]);
+
+        return new GregorianCalendar(year, month, day);
+    }
+
 }

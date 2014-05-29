@@ -18,11 +18,14 @@ public class Address {
     private int cep;
     private int number;
     private String complement;
+    private UF uf;
 
-    private enum uf {
+    public UF getUf() {
+        return uf;
+    }
 
-        AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG,
-        PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO;
+    public void setUf(UF uf) {
+        this.uf = uf;
     }
 
     public int getNumber() {
@@ -79,6 +82,5 @@ public class Address {
 
     public void setComplement(String complement) {
         this.complement = complement;
-    }
-
+    }    
 }

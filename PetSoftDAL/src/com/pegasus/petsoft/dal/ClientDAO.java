@@ -38,8 +38,7 @@ public class ClientDAO implements IRepository<Client> {
             st.setString(1, t.getName());
             st.setString(2, String.format("%s-%s-%s", t.getBornDate().getInstance().YEAR, t.getBornDate().getInstance().MONTH, t.getBornDate().getInstance().DAY_OF_MONTH));
             int id_endereco = addressDAO.insert(t.getAddress());
-            st.setInt(3, id_endereco);//E se o obj ainda não estiver no bd?
-            
+            st.setInt(3, id_endereco);
             st.setInt(4, t.getPhone());
             st.setInt(5, t.getCelphone());
             return st.executeUpdate();
@@ -60,7 +59,7 @@ public class ClientDAO implements IRepository<Client> {
             while (result.next()) {
                 c.setId(id);
                 c.setName(result.getString("name"));
-                c.setBornDate(parseGregorianCalendar(result.getString("bornDate")));
+                c.setBornDate(parseGregorianCalendar(result.getString("bornDate"),"-"));
                 c.setAddress(addressDAO.retrieve(result.getInt("address_id")));
                 c.setPhone(result.getInt("phone"));
                 c.setCelphone(result.getInt("celphone"));
@@ -87,7 +86,7 @@ public class ClientDAO implements IRepository<Client> {
                 c.setName(result.getString("name"));
                 String[] date = result.getString("bornDate").split("-");
                 int year = Integer.parseInt(date[0]);
-                int month = Integer.parseInt(date[1]);
+                int month = Integer.parseInt(date[1])-1;
                 int day = Integer.parseInt(date[2]);
                 c.setBornDate(new GregorianCalendar(year, month, day));
                 c.setAddress(addressDAO.retrieve(result.getInt("address_id")));//Implementar todos os metodos do repositorio de endereços.
@@ -134,8 +133,8 @@ public class ClientDAO implements IRepository<Client> {
         }
     }
 
-    private GregorianCalendar parseGregorianCalendar(String d) {
-        String[] date = d.split("-");
+    private GregorianCalendar parseGregorianCalendar(String source,String delimiter) {
+        String[] date = source.split(delimiter);
         int year = Integer.parseInt(date[0]);
         int month = Integer.parseInt(date[1]);
         int day = Integer.parseInt(date[2]);
