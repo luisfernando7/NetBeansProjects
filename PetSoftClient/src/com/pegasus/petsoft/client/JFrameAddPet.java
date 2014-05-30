@@ -5,8 +5,11 @@
  */
 package com.pegasus.petsoft.client;
 
+import com.pegasus.petsoft.dal.ClientDAO;
 import com.pegasus.petsoft.dal.PetsDAO;
+import com.pegasus.petsoft.model.Client;
 import com.pegasus.petsoft.model.Pets;
+import java.awt.Color;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFormattedTextField.AbstractFormatter;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.MaskFormatter;
@@ -39,7 +43,9 @@ public class JFrameAddPet extends javax.swing.JFrame {
      */
     public JFrameAddPet() {
         initComponents();
+        ClientDAO client = new ClientDAO();
         jPanelAddPet.setBorder(BorderFactory.createTitledBorder("Pets"));
+        loadOwners();
         MaskFormatter mask = null;
         try {
             mask = new MaskFormatter("##/##/####");
@@ -50,10 +56,10 @@ public class JFrameAddPet extends javax.swing.JFrame {
         field.setSize(txtPetBornDate.getSize());
         field.setEditable(true);
         this.jPanelAddPet.add(field);
-        field.setLocation(jLabel2.getLocation().x+20,jLabel2.getLocation().y);
+        field.setLocation(jLabel2.getLocation().x + 20, jLabel2.getLocation().y);
         field.setVisible(true);
         txtPetBornDate.setVisible(false);
-        
+
         try {
             MaskFormatter formatter = new MaskFormatter("dd/MM/yyyy");
         } catch (ParseException ex) {
@@ -84,6 +90,7 @@ public class JFrameAddPet extends javax.swing.JFrame {
         cmbPetOwner = new javax.swing.JComboBox();
         btnAddPet = new javax.swing.JButton();
         btnCancelPet = new javax.swing.JButton();
+        lblErro = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -175,13 +182,20 @@ public class JFrameAddPet extends javax.swing.JFrame {
                     .addGap(1, 1, 1)))
         );
 
+        lblErro.setText("TESTE");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanelAddPet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanelAddPet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addComponent(lblErro)))
                 .addContainerGap(55, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -189,7 +203,9 @@ public class JFrameAddPet extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanelAddPet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(lblErro)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -200,24 +216,26 @@ public class JFrameAddPet extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelPetActionPerformed
 
     private void btnAddPetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPetActionPerformed
-        Pets p = new Pets();
-        p.setName(txtPetName.getText());
-        p.setBreed(txtPetBreed.getText());
+        String msg = validateFields();
+        if (rootPaneCheckingEnabled) {
+            try {
+                Pets p = new Pets();
+                p.setName(txtPetName.getText());
+                p.setBreed(txtPetBreed.getText());
+                DateFormat df = new SimpleDateFormat();
+                GregorianCalendar date = parseGregorianCalendar(txtPetBornDate.getText(), "/");
+                p.setBornDate(date);
+//                p.setOwner(cmbPetOwner.getSelectedItem());
+                PetsDAO pets = new PetsDAO();
+                pets.insert(p);
+                JOptionPane.showMessageDialog(this, "Pet inserido com sucesso!");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Falha ao inserir pet");
+            }
+        } else {
 
-        java.util.Date d = new java.util.Date();
+        }
 
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setGregorianChange(null);
-        /*DateFormat df = new SimpleDateFormat();
-         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
-         try {
-         date.setTime(df.parse(txtPetBornDate.getText()));
-         } catch (ParseException ex) {
-         Logger.getLogger(JFrameAddClient.class.getName()).log(Level.SEVERE, null, ex);
-         }*/
-        //p.setBornDate(date);
-        PetsDAO pets = new PetsDAO();
-        pets.insert(p);
 
     }//GEN-LAST:event_btnAddPetActionPerformed
 
@@ -255,6 +273,66 @@ public class JFrameAddPet extends javax.swing.JFrame {
             }
         });
     }
+    
+     private void loadOwnersInCombobox() {
+        //DefaultComboBoxModel modelo= (DefaultComboBoxModel) cmbPetOwner.getModel();  
+        //modelo.addElement("oi");  
+        cmbPetOwner.removeAllItems();
+        ArrayList<String> columns = new ArrayList<>();
+
+        columns.add("col1");
+        columns.add("col2");
+        columns.add("col3");
+
+        DefaultComboBoxModel tableModel = new DefaultComboBoxModel(columns.toArray());
+        cmbPetOwner.setModel(tableModel);
+    }
+
+    private void loadOwners() {
+        ClientDAO client = new ClientDAO();
+        ArrayList<Client> clients = new ArrayList<>();
+        clients = client.retrieveAll();
+        for (Client client1 : clients) {
+            cmbPetOwner.addItem(client1);
+        }
+    }
+
+    public String validateFields() {
+        if (txtPetName.getText().isEmpty()) {
+            txtPetName.setBackground(Color.LIGHT_GRAY);
+            lblErro.setText("*Campo Nome obrigatório!");
+            lblErro.setVisible(true);
+            return "nome";
+        }
+        if (!txtPetName.getText().isEmpty()) {
+            txtPetName.setBackground(Color.WHITE);
+        }
+        if (txtPetBreed.getText().isEmpty()) {
+            txtPetBreed.setBackground(Color.LIGHT_GRAY);
+            lblErro.setText("*Campo Raça obrigatório!");
+            lblErro.setVisible(true);
+            return "raça";
+        }
+        if (!txtPetBreed.getText().isEmpty()) {
+            txtPetBreed.setBackground(Color.WHITE);
+        }
+        if (txtPetBornDate.getText().isEmpty()) {
+            txtPetBornDate.setBackground(Color.WHITE);
+            lblErro.setText("*Campo Data de Nascimento obrigatório!");
+            lblErro.setVisible(true);
+            return "data de nascimento";
+        }
+        return "";
+    }
+    
+    private GregorianCalendar parseGregorianCalendar(String source, String delimiter) {
+        String[] date = source.split(delimiter);
+        int day = Integer.parseInt(date[0]);
+        int month = Integer.parseInt(date[1]);
+        int year = Integer.parseInt(date[2]);
+
+        return new GregorianCalendar(year, month, day);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddPet;
@@ -265,22 +343,11 @@ public class JFrameAddPet extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanelAddPet;
+    private javax.swing.JLabel lblErro;
     private javax.swing.JFormattedTextField txtPetBornDate;
     private javax.swing.JTextField txtPetBreed;
     private javax.swing.JTextField txtPetName;
     // End of variables declaration//GEN-END:variables
 
-    private void loadOwnersInCombobox() {
-        //DefaultComboBoxModel modelo= (DefaultComboBoxModel) cmbPetOwner.getModel();  
-        //modelo.addElement("oi");  
-        cmbPetOwner.removeAllItems();
-        ArrayList<String> columns = new ArrayList<String>();
-
-        columns.add("col1");
-        columns.add("col2");
-        columns.add("col3");
-
-        DefaultComboBoxModel tableModel = new DefaultComboBoxModel(columns.toArray());
-        cmbPetOwner.setModel(tableModel);
-    }
 }
+

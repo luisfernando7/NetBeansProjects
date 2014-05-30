@@ -103,7 +103,7 @@ public class ClientDAO implements IRepository<Client> {
 
     }
 
-    @Override //ver com Luís
+    @Override 
     public boolean update(Client t) {
         try {
             Connection connection = ConnectionFactory.GetConnect();
@@ -121,7 +121,7 @@ public class ClientDAO implements IRepository<Client> {
         }
     }
 
-    @Override //ver com Luís
+    @Override 
     public boolean delete(int id) {
         try {
             Connection connection = ConnectionFactory.GetConnect();
