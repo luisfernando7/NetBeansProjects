@@ -311,9 +311,7 @@ public class MainJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void btnViewClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewClientActionPerformed
-        JFrameViewClient viewClient = new JFrameViewClient();
-        viewClient.setLocationRelativeTo(this);
-        viewClient.setVisible(true);
+               
     }//GEN-LAST:event_btnViewClientActionPerformed
 
     /**
