@@ -89,7 +89,6 @@ public class PetsDAO implements IRepository<Pets> {
             Logger.getLogger(PetsDAO.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-
     }
 
     @Override // ver com  Luis
@@ -128,8 +127,7 @@ public class PetsDAO implements IRepository<Pets> {
         } catch (SQLException ex) {
             Logger.getLogger(PetsDAO.class.getName()).log(Level.SEVERE, null, ex);
             return false;
-        }
-        
+        }        
     }
 
     @Override // ver com Luis

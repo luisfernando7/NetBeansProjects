@@ -67,7 +67,6 @@ public class JFrameAddPet extends javax.swing.JFrame {
         }
 
         txtPetBornDate.setFormatterFactory(null);
-        loadOwnersInCombobox();
     }
 
     /**
@@ -217,7 +216,7 @@ public class JFrameAddPet extends javax.swing.JFrame {
 
     private void btnAddPetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPetActionPerformed
         String msg = validateFields();
-        if (rootPaneCheckingEnabled) {
+        if (!msg.isEmpty()) {
             try {
                 Pets p = new Pets();
                 p.setName(txtPetName.getText());
@@ -235,8 +234,6 @@ public class JFrameAddPet extends javax.swing.JFrame {
         } else {
 
         }
-
-
     }//GEN-LAST:event_btnAddPetActionPerformed
 
     /**
@@ -272,20 +269,6 @@ public class JFrameAddPet extends javax.swing.JFrame {
                 new JFrameAddPet().setVisible(true);
             }
         });
-    }
-    
-     private void loadOwnersInCombobox() {
-        //DefaultComboBoxModel modelo= (DefaultComboBoxModel) cmbPetOwner.getModel();  
-        //modelo.addElement("oi");  
-        cmbPetOwner.removeAllItems();
-        ArrayList<String> columns = new ArrayList<>();
-
-        columns.add("col1");
-        columns.add("col2");
-        columns.add("col3");
-
-        DefaultComboBoxModel tableModel = new DefaultComboBoxModel(columns.toArray());
-        cmbPetOwner.setModel(tableModel);
     }
 
     private void loadOwners() {
@@ -324,7 +307,7 @@ public class JFrameAddPet extends javax.swing.JFrame {
         }
         return "";
     }
-    
+
     private GregorianCalendar parseGregorianCalendar(String source, String delimiter) {
         String[] date = source.split(delimiter);
         int day = Integer.parseInt(date[0]);
@@ -350,4 +333,3 @@ public class JFrameAddPet extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
 }
-

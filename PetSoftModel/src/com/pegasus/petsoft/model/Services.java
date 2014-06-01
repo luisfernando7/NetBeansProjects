@@ -14,7 +14,7 @@ public class Services {
     
     private int id;
     private String type;
-    private double price;
+    private float price;
 
     public int getId() {
         return id;
@@ -32,18 +32,21 @@ public class Services {
         this.type = type;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
-    public Services(int id, String type, double price) {
+    public Services(int id, String type, float price) {
         this.id = id;
         this.type = type;
         this.price = price;
+    }
+
+    public Services() {
     }
     
     

@@ -307,6 +307,7 @@ public class MainJFrame extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         JFrameAddPet addPet = new JFrameAddPet();
         addPet.setLocationRelativeTo(this);
+        addPet.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addPet.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 

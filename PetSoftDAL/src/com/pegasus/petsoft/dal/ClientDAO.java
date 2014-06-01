@@ -100,7 +100,6 @@ public class ClientDAO implements IRepository<Client> {
             Logger.getLogger(AddressDAO.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-
     }
 
     @Override 
